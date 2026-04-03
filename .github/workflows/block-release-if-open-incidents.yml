@@ -1,0 +1,38 @@
+name: Block Release If Emergency Incidents Are Open
+
+on:
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  block-if-open-incidents:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for open emergency override incidents
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'incident,emergency-override'
+            });
+
+            if (issues.data.length > 0) {
+              const message = [
+                '❌ Release blocked.',
+                '',
+                `There are ${issues.data.length} open emergency-override incident(s).`,
+                '',
+                'All emergency incidents must be reviewed and CLOSED before merging to main.',
+                '',
+                'Open incidents:',
+                ...issues.data.map(i => `#${i.number} – ${i.title}`)
+              ].join('\n');
+
+              core.setFailed(message);
+              return;
+            }
+
+            core.info('✅ No open emergency incidents – release permitted');

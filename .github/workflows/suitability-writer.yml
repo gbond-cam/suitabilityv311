@@ -1,0 +1,31 @@
+name: Suitability Writer v3
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore
+      run: dotnet restore SuitabilityWriter.v3.sln
+
+    - name: Build
+      run: dotnet build SuitabilityWriter.v3.sln --configuration Release --no-restore
+
+    - name: Test
+      run: dotnet test SuitabilityWriter.v3.sln --no-build
+
+    - name: Policy Check (Fail Closed)
+      run: |
+        grep -R "FAIL_CLOSED" src || exit 1

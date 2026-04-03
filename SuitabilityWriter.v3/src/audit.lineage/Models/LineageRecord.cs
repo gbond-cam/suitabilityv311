@@ -1,0 +1,1 @@
+// Uses the shared `LineageRecord` from `shared.kernel`.

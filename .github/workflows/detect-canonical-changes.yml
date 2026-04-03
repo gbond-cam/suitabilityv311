@@ -1,0 +1,29 @@
+name: Detect Canonical Template Changes
+
+on:
+  pull_request:
+
+jobs:
+  detect-canonical-changes:
+    runs-on: ubuntu-latest
+
+    outputs:
+      canonical_changed: ${{ steps.detect.outputs.changed }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Detect canonical template changes
+      id: detect
+      run: |
+        set -e
+        CHANGED=$(git diff --name-only origin/main...HEAD | grep '^templates/' || true)
+
+        if [ -n "$CHANGED" ]; then
+          echo "⚠️ Canonical templates changed:"
+          echo "$CHANGED"
+          echo "changed=true" >> $GITHUB_OUTPUT
+        else
+          echo "✅ No canonical template changes"
+          echo "changed=false" >> $GITHUB_OUTPUT
+        fi

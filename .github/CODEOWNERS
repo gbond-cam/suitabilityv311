@@ -1,0 +1,12 @@
+# Canonical bootstrap (dual control)
+/templates/Program.cs        @GrahamBond @ComplianceOwner
+/templates/host.json         @GrahamBond @ComplianceOwner
+
+# Suitability schemas (dual control)
+artefacts/schemas/**         @GrahamBond @ComplianceOwner
+
+# Validation matrices (dual control)
+artefacts/validation/**      @GrahamBond @ComplianceOwner
+
+# Governance artefacts
+/governance/**               @GrahamBond @ComplianceOwner

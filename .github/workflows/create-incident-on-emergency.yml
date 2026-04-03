@@ -1,0 +1,60 @@
+name: Create Incident Ticket on Emergency Override
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  create-incident:
+    if: >
+      github.event.pull_request.merged == true &&
+      contains(github.event.pull_request.labels.*.name, 'EMERGENCY-OVERRIDE')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create incident issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const title = `🚨 INCIDENT: Emergency Override – PR #${pr.number}`;
+            const body = [
+              '## Emergency Override Incident Record',
+              '',
+              `**PR:** #${pr.number}`,
+              `**Title:** ${pr.title}`,
+              `**Merged by:** ${pr.merged_by.login}`,
+              `**Author:** ${pr.user.login}`,
+              `**Merged at:** ${pr.merged_at}`,
+              '',
+              '---',
+              '',
+              '### Emergency Justification (from PR)',
+              '',
+              pr.body || '_No description provided_',
+              '',
+              '---',
+              '',
+              '### Required Post‑Incident Actions',
+              '',
+              '- [ ] Root cause analysis completed',
+              '- [ ] Reason normal approval could not be used',
+              '- [ ] Impact on clients assessed',
+              '- [ ] Preventative controls identified',
+              '- [ ] Normal governance approval completed (if permanent change)',
+              '',
+              '---',
+              '',
+              '**Status:** Open',
+              '**Category:** Emergency Change',
+              '**Governance:** Mandatory Review'
+            ].join('\n');
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body,
+              labels: ['incident', 'emergency-override', 'governance']
+            });
+
+            core.info('✅ Incident ticket created automatically');

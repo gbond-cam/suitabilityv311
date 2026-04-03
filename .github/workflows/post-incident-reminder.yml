@@ -1,0 +1,24 @@
+name: Post-Incident Review Reminder
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  post-incident-check:
+    if: >
+      github.event.pull_request.merged == true &&
+      contains(github.event.pull_request.labels.*.name, 'EMERGENCY-OVERRIDE')
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Require post-incident review
+      run: |
+        echo "⚠️ Emergency override was used."
+        echo ""
+        echo "A post-incident review MUST be completed:"
+        echo " - Root cause analysis"
+        echo " - Why normal controls were insufficient"
+        echo " - Preventative actions"
+        echo ""
+        echo "Create a follow-up issue within 24 hours."

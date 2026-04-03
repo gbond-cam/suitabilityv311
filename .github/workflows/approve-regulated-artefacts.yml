@@ -1,0 +1,39 @@
+name: Approve Regulated Artefact Changes
+
+on:
+  pull_request:
+
+jobs:
+  detect-regulated-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      regulated_changed: ${{ steps.filter.outputs.regulated }}
+    steps:
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            regulated:
+              - 'SuitabilityWriter.v3/artefacts/**'
+              - 'SuitabilityWriter.v3/governance/artefact-approvals.sha256'
+
+  approval-gate:
+    runs-on: ubuntu-latest
+    needs: detect-regulated-changes
+    if: ${{ needs.detect-regulated-changes.outputs.regulated_changed == 'true' }}
+    steps:
+      - name: Require governance approval
+        run: |
+          echo "❌ Regulated artefacts have changed."
+          echo ""
+          echo "Affected artefacts include one or more of:"
+          echo " - Canonical bootstrap templates"
+          echo " - Suitability schemas"
+          echo " - Validation matrices / severity models"
+          echo ""
+          echo "This requires:"
+          echo " - Approval from CODEOWNERS"
+          echo " - Documented justification in the PR description"
+          echo ""
+          echo "Without approval, this PR must not be merged."
+          exit 1

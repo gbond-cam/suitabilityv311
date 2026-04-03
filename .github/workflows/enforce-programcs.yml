@@ -1,0 +1,40 @@
+name: Enforce Program.cs Consistency
+
+on:
+  pull_request:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  enforce-programcs:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Enforce identical Program.cs across all services
+      run: |
+        set -e
+
+        CANONICAL="templates/Program.cs"
+
+        if [ ! -f "$CANONICAL" ]; then
+          echo "❌ Canonical Program.cs not found at $CANONICAL"
+          exit 1
+        fi
+
+        echo "✅ Canonical Program.cs found"
+
+        DIFF_FOUND=0
+
+        for FILE in $(find src -name Program.cs); do
+          echo "🔍 Checking $FILE"
+          diff -u "$CANONICAL" "$FILE" || DIFF_FOUND=1
+        done
+
+        if [ "$DIFF_FOUND" -ne 0 ]; then
+          echo "❌ Program.cs drift detected. All Program.cs files must be identical."
+          exit 1
+        fi
+
+        echo "✅ All Program.cs files are identical"

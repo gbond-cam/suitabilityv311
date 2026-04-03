@@ -1,0 +1,47 @@
+name: Enforce Program.cs Hash Consistency
+
+on:
+  pull_request:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  enforce-programcs-hash:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Calculate canonical Program.cs hash
+      id: canonical
+      run: |
+        set -e
+        CANONICAL="templates/Program.cs"
+
+        if [ ! -f "$CANONICAL" ]; then
+          echo "❌ Canonical Program.cs not found at $CANONICAL"
+          exit 1
+        fi
+
+        HASH=$(sha256sum "$CANONICAL" | awk '{print $1}')
+        echo "canonical_hash=$HASH" >> $GITHUB_OUTPUT
+        echo "✅ Canonical hash: $HASH"
+
+    - name: Enforce identical Program.cs across all services
+      run: |
+        set -e
+        EXPECTED="${{ steps.canonical.outputs.canonical_hash }}"
+
+        for FILE in $(find src -name Program.cs); do
+          CURRENT=$(sha256sum "$FILE" | awk '{print $1}')
+          echo "🔍 $FILE → $CURRENT"
+
+          if [ "$CURRENT" != "$EXPECTED" ]; then
+            echo "❌ Hash mismatch in $FILE"
+            echo "   Expected: $EXPECTED"
+            echo "   Found:    $CURRENT"
+            exit 1
+          fi
+        done
+
+        echo "✅ All Program.cs files match canonical hash"

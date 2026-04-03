@@ -1,0 +1,15 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run suitability writer",
+			"type": "shell",
+			"command": "C:/Users/GrahamBond/.local/bin/python3.14.exe",
+			"args": [
+				"main.py"
+			],
+			"isBackground": false,
+			"group": "build"
+		}
+	]
+}

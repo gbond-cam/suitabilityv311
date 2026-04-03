@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://consilium-ifa.co.uk/schemas/ClientEvidence.v3.1.json",
+  "title": "ClientEvidence",
+  "description": "Schema for client evidence payloads used in suitability processing.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "caseId",
+    "clientId",
+    "evidenceType",
+    "source",
+    "submittedAtUtc"
+  ],
+  "properties": {
+    "caseId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "clientId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evidenceType": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source": {
+      "type": "string",
+      "minLength": 1
+    },
+    "submittedAtUtc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    }
+  }
+}

@@ -507,7 +507,7 @@ REPLACE_WITH_ACTUAL_SIGNING_PUBLIC_KEY
 
 This evidence bundle is cryptographically signed, timestamped, and delivered as an encrypted JSON envelope.
 Decrypt the `.enc` file to recover the signed ZIP, then follow the steps below to independently verify its integrity and authenticity.
-The envelope structure is defined by schema version `1.1.0` at `https://schemas.consilium.co.uk/evidence/encrypted-bundle-envelope/1.1.0.json`.
+The envelope structure is defined by schema version `1.0.0` at `https://schemas.consilium.co.uk/evidence/encrypted-bundle-envelope/1.0.0.json`.
 The schema catalog is published at `https://schemas.consilium.co.uk/evidence/schema-catalog.json`.
 
 ---

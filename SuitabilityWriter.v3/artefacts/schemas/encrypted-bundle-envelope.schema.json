@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schemas.consilium.co.uk/evidence/encrypted-bundle-envelope/1.1.0.json",
+  "$id": "https://schemas.consilium.co.uk/evidence/encrypted-bundle-envelope/1.0.0.json",
   "title": "Encrypted Evidence Bundle Envelope",
   "type": "object",
   "required": [

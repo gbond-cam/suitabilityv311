@@ -15,6 +15,21 @@ var host = new HostBuilder()
 
         services.AddSingleton<ISystemClock, SystemClock>();
         services.AddSingleton<ICorrelationIdProvider, CorrelationIdProvider>();
+        services.AddHttpClient<AuditLineageClient>(client =>
+        {
+            var baseUrl = Environment.GetEnvironmentVariable("AUDIT_LINEAGE_BASE_URL")
+                ?? "http://localhost:7071/";
+            client.BaseAddress = new Uri(baseUrl);
+            client.Timeout = TimeSpan.FromSeconds(5);
+
+            var functionKey = Environment.GetEnvironmentVariable("AUDIT_LINEAGE_FUNCTION_KEY");
+            if (!string.IsNullOrWhiteSpace(functionKey))
+            {
+                client.DefaultRequestHeaders.Add("x-functions-key", functionKey);
+            }
+        });
+        services.AddSingleton<ILineageRecorder>(sp =>
+            sp.GetRequiredService<AuditLineageClient>());
         services.AddSingleton<IFailClosedPolicy, FailClosedPolicy>();
     })
     .Build();

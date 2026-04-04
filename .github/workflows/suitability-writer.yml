@@ -26,6 +26,12 @@ jobs:
     - name: Test
       run: dotnet test SuitabilityWriter.v3.sln --no-build
 
+    - name: Run golden path regression
+      run: dotnet test --filter GoldenPath
+
+    - name: Run GoldenPath invariant
+      run: dotnet test SuitabilityWriter.v3.sln --filter TestCategory=GoldenPath
+
     - name: Policy Check (Fail Closed)
       run: |
         grep -R "FAIL_CLOSED" src || exit 1

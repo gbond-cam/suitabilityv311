@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.consilium.co.uk/evidence/encrypted-bundle-envelope/1.1.0.json",
+  "title": "Encrypted Evidence Bundle Envelope",
+  "type": "object",
+  "required": [
+    "schema",
+    "schemaVersion",
+    "encryptionAlgorithm",
+    "keyEncryptionAlgorithm",
+    "recipientId",
+    "recipientKeyId",
+    "encryptedKey",
+    "iv",
+    "ciphertext",
+    "authTag",
+    "generatedAtUtc",
+    "bundleType"
+  ],
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "com.consilium.evidence.envelope"
+    },
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "encryptionAlgorithm": {
+      "type": "string",
+      "enum": ["AES-256-GCM"]
+    },
+    "keyEncryptionAlgorithm": {
+      "type": "string",
+      "enum": ["RSA-OAEP-SHA256"]
+    },
+    "recipientId": {
+      "type": "string",
+      "description": "Human-readable recipient identifier"
+    },
+    "recipientKeyId": {
+      "type": "string",
+      "description": "Public key identifier or thumbprint"
+    },
+    "encryptedKey": {
+      "type": "string",
+      "contentEncoding": "base64"
+    },
+    "iv": {
+      "type": "string",
+      "contentEncoding": "base64"
+    },
+    "ciphertext": {
+      "type": "string",
+      "contentEncoding": "base64"
+    },
+    "authTag": {
+      "type": "string",
+      "contentEncoding": "base64"
+    },
+    "generatedAtUtc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "bundleType": {
+      "type": "string",
+      "enum": ["EvidenceBundle"]
+    },
+    "extensions": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

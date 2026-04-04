@@ -1,1 +1,2 @@
-// Uses the shared `LineageRecord` from `shared.kernel`.
+// Intentionally no local `LineageRecord` type here.
+// `audit.lineage` uses the shared model from `shared.kernel`.

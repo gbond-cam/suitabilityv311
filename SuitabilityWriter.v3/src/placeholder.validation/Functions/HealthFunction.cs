@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Text.Json;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
@@ -44,18 +45,33 @@ public class ValidatePlaceholderFunction
 
         var caseId = payload.CaseId;
         var artefact = payload.Artefact;
+        var artefactUrl = $"https://example.invalid/artefacts/{Uri.EscapeDataString(artefact.Name)}";
 
-        await _lineage.RecordAsync(new LineageRecord(
+        var meta = JsonSerializer.SerializeToElement(new
+        {
+            sourceUrl = artefactUrl,
+            incidentId = (string?)null
+        });
+
+        var artefactUsed = new LineageRecord(
+            EventId: string.Empty,
             CaseId: caseId,
-            Stage: "Validation",
+            Stage: LineageStages.Validation,
             Action: "ArtefactUsed",
             ArtefactName: artefact.Name,
             ArtefactVersion: artefact.Version,
             ArtefactHash: artefact.Hash,
             PerformedBy: "placeholder.validation",
             TimestampUtc: _clock.UtcNow,
-            Metadata: null
-        ));
+            Metadata: meta
+        );
+
+        artefactUsed = artefactUsed with
+        {
+            EventId = IdempotencyKey.From(artefactUsed)
+        };
+
+        await _lineage.RecordAsync(artefactUsed);
 
         await _lineage.RecordAsync(new LineageRecord(
             CaseId: caseId,

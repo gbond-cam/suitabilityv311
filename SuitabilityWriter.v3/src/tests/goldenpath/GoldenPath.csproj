@@ -1,0 +1,54 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- Match runtime used by Function Apps -->
+    <TargetFramework>net8.0</TargetFramework>
+
+    <!-- This is a system invariant test, not a unit test -->
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <OutputType>Library</OutputType>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <!-- Make intent explicit -->
+    <AssemblyName>SuitabilityWriter.GoldenPath</AssemblyName>
+    <RootNamespace>SuitabilityWriter.GoldenPath</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Test framework -->
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="3.3.1" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.3.1" />
+
+    <!-- HTTP + JSON for end-to-end calls -->
+    <PackageReference Include="System.Net.Http.Json" Version="8.0.0" />
+
+    <!-- Assertions -->
+    <PackageReference Include="FluentAssertions" Version="6.12.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Reference shared contracts / models ONLY -->
+    <!-- Never reference Function App projects directly -->
+    <ProjectReference Include="..\..\shared.kernel\shared.kernel.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Test fixtures -->
+    <None Update="Fixtures\**\*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+
+    <None Update="Expected\**\*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+
+    <None Include="..\..\..\artefacts\schemas\encrypted-bundle-envelope.schema.json">
+      <Link>schemas\encrypted-bundle-envelope.schema.json</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

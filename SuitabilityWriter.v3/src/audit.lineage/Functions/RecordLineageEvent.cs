@@ -3,6 +3,7 @@ using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using System.Security.Cryptography;
 using System.Net;
+using System.Text.Json;
 
 public sealed class RecordLineageEvent
 {
@@ -30,16 +31,38 @@ public sealed class RecordLineageEvent
             return bad;
         }
 
-        if (string.IsNullOrWhiteSpace(record.ArtefactHash) &&
-            record.Metadata is IDictionary<string, object> metadata &&
-            metadata.TryGetValue("artefactPath", out var artefactPathValue) &&
-            artefactPathValue is string artefactPath &&
-            !string.IsNullOrWhiteSpace(artefactPath) &&
-            File.Exists(artefactPath))
+        if (string.IsNullOrWhiteSpace(record.EventId))
         {
-            var bytes = File.ReadAllBytes(artefactPath);
-            var hash = Convert.ToHexString(SHA256.HashData(bytes));
-            record = record with { ArtefactHash = hash };
+            var headerEventId = req.Headers.TryGetValues("Idempotency-Key", out var values)
+                ? values.FirstOrDefault()
+                : null;
+
+            record = record with { EventId = headerEventId ?? IdempotencyKey.From(record) };
+        }
+
+        if (string.IsNullOrWhiteSpace(record.ArtefactHash))
+        {
+            string? artefactPath = null;
+
+            if (record.Metadata is JsonElement metadataElement &&
+                metadataElement.ValueKind == JsonValueKind.Object &&
+                metadataElement.TryGetProperty("artefactPath", out var artefactPathProperty) &&
+                artefactPathProperty.ValueKind == JsonValueKind.String)
+            {
+                artefactPath = artefactPathProperty.GetString();
+            }
+            else if (record.Metadata is IDictionary<string, object> metadata &&
+                     metadata.TryGetValue("artefactPath", out var artefactPathValue))
+            {
+                artefactPath = artefactPathValue?.ToString();
+            }
+
+            if (!string.IsNullOrWhiteSpace(artefactPath) && File.Exists(artefactPath))
+            {
+                var bytes = File.ReadAllBytes(artefactPath);
+                var hash = Convert.ToHexString(SHA256.HashData(bytes));
+                record = record with { ArtefactHash = hash };
+            }
         }
 
         await _writer.AppendAsync(record);

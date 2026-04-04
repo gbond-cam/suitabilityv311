@@ -1,0 +1,175 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://consiliumam.co.uk/schemas/case-reconstruction.schema.json",
+  "title": "CaseReconstructionDto",
+  "description": "Read-only reconstruction of an advice case derived from immutable audit lineage.",
+  "type": "object",
+  "required": [
+    "caseId",
+    "timeline",
+    "governance",
+    "metrics"
+  ],
+  "properties": {
+    "caseId": {
+      "type": "string",
+      "description": "Unique identifier for the advice case"
+    },
+    "timeline": {
+      "type": "array",
+      "description": "Chronologically ordered, immutable sequence of lineage events",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/reconstructionEvent"
+      }
+    },
+    "governance": {
+      "$ref": "#/$defs/governance"
+    },
+    "metrics": {
+      "$ref": "#/$defs/metrics"
+    }
+  },
+  "$defs": {
+    "reconstructionEvent": {
+      "type": "object",
+      "required": [
+        "eventId",
+        "timestampUtc",
+        "stage",
+        "action",
+        "performedBy",
+        "artefact",
+        "metadata"
+      ],
+      "properties": {
+        "eventId": {
+          "type": "string",
+          "description": "Stable idempotency identifier for the lineage event"
+        },
+        "timestampUtc": {
+          "type": "string",
+          "format": "date-time",
+          "description": "UTC timestamp when the event occurred"
+        },
+        "stage": {
+          "type": "string",
+          "description": "Pipeline stage where the event occurred",
+          "enum": [
+            "Validation",
+            "Routing",
+            "Generation",
+            "Delivery",
+            "Governance",
+            "Audit"
+          ]
+        },
+        "action": {
+          "type": "string",
+          "description": "Specific action recorded in lineage"
+        },
+        "performedBy": {
+          "type": "string",
+          "description": "Service or individual responsible for the action"
+        },
+        "artefact": {
+          "$ref": "#/$defs/artefact"
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Raw metadata captured for audit fidelity",
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "artefact": {
+      "type": "object",
+      "required": [
+        "name",
+        "version",
+        "hash"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Artefact name or 'N/A' for governance events"
+        },
+        "version": {
+          "type": "string",
+          "description": "Artefact version or 'N/A'"
+        },
+        "hash": {
+          "type": "string",
+          "description": "SHA-256 hash of the artefact or 'N/A'"
+        }
+      },
+      "additionalProperties": false
+    },
+    "governance": {
+      "type": "object",
+      "required": [
+        "isBlocked",
+        "emergencyOverrideApplied",
+        "adviserApproved"
+      ],
+      "properties": {
+        "isBlocked": {
+          "type": "boolean",
+          "description": "Indicates whether the case was blocked"
+        },
+        "blockReasonCode": {
+          "type": ["string", "null"],
+          "description": "Reason code for blocking, if applicable"
+        },
+        "emergencyOverrideApplied": {
+          "type": "boolean",
+          "description": "Whether an emergency override was applied"
+        },
+        "incidentId": {
+          "type": ["string", "null"],
+          "description": "Incident identifier associated with emergency override"
+        },
+        "adviserApproved": {
+          "type": "boolean",
+          "description": "Whether adviser approval was recorded"
+        },
+        "adviserId": {
+          "type": ["string", "null"],
+          "description": "Identifier of approving adviser"
+        },
+        "deliveredAtUtc": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "UTC timestamp when advice was delivered"
+        }
+      },
+      "additionalProperties": false
+    },
+    "metrics": {
+      "type": "object",
+      "required": [
+        "totalEvents"
+      ],
+      "properties": {
+        "totalEvents": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Total number of lineage events for the case"
+        },
+        "timeToDelivery": {
+          "type": ["string", "null"],
+          "description": "ISO-8601 duration from first event to delivery (if delivered)",
+          "pattern": "^P"
+        },
+        "timeToBlock": {
+          "type": ["string", "null"],
+          "description": "ISO-8601 duration from first event to block (if blocked)",
+          "pattern": "^P"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

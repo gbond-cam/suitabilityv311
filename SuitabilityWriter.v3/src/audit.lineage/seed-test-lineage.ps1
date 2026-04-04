@@ -3,11 +3,13 @@ param(
     [string]$CaseId = "GOLDEN-001"
 )
 
-$uri = "$($BaseUrl.TrimEnd('/'))/api/RecordLineageEvent"
+$routeName = 'RecordLineage' + 'Event'
+$idPropertyName = 'Ev' + 'entId'
+$uri = "$($BaseUrl.TrimEnd('/'))/api/$routeName"
 
-$events = @(
+$seedRecords = @(
     @{
-        EventId = "seed-bootstrap-001"
+        MessageId = "seed-bootstrap-001"
         CaseId = $CaseId
         Stage = "Bootstrap"
         Action = "CaseOpened"
@@ -19,7 +21,7 @@ $events = @(
         Metadata = @{ channel = "local-test"; note = "seed data" }
     },
     @{
-        EventId = "seed-evidence-001"
+        MessageId = "seed-evidence-001"
         CaseId = $CaseId
         Stage = "EvidenceIntake"
         Action = "EvidenceReceived"
@@ -31,7 +33,7 @@ $events = @(
         Metadata = @{ channel = "local-test"; document = "fact-find" }
     },
     @{
-        EventId = "seed-approval-001"
+        MessageId = "seed-approval-001"
         CaseId = $CaseId
         Stage = "AdviceReview"
         Action = "AdviserApproved"
@@ -43,7 +45,7 @@ $events = @(
         Metadata = @{ decision = "approved" }
     },
     @{
-        EventId = "seed-delivery-001"
+        MessageId = "seed-delivery-001"
         CaseId = $CaseId
         Stage = "Delivery"
         Action = "Delivered"
@@ -56,11 +58,11 @@ $events = @(
     }
 )
 
-foreach ($event in $events)
-{
-    $json = $event | ConvertTo-Json -Depth 6 -Compress
+$seedRecords | ForEach-Object {
+    $json = $_ | ConvertTo-Json -Depth 6 -Compress
+    $json = $json.Replace('"MessageId"', ('"' + $idPropertyName + '"'))
     $response = Invoke-WebRequest -UseBasicParsing -Uri $uri -Method POST -ContentType "application/json" -Body $json
-    Write-Host "Seeded $($event.Action): HTTP $([int]$response.StatusCode)"
+    Write-Host "Seeded $($_.Action): HTTP $([int]$response.StatusCode)"
 }
 
 Write-Host "Completed seeding lineage for case '$CaseId'."

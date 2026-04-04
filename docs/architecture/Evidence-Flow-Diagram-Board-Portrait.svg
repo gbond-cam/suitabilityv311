@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="794"
+     height="1123"
+     viewBox="0 0 794 1123">
+
+  <defs>
+    <marker id="arrow"
+            markerWidth="10"
+            markerHeight="10"
+            refX="10"
+            refY="5"
+            orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#333333"/>
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="397" y="60"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="18"
+        font-weight="bold"
+        text-anchor="middle">
+    Evidence Controls – Board Overview
+  </text>
+
+  <!-- Box style note -->
+  <text x="397" y="90"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="12"
+        text-anchor="middle">
+    High‑level view of how advice evidence is controlled and verified
+  </text>
+
+  <!-- Intake -->
+  <rect x="197" y="140" width="400" height="70"
+        fill="#f9fafb" stroke="#333333" stroke-width="1.3"/>
+  <text x="397" y="170"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="14"
+        text-anchor="middle">
+    Evidence Intake
+  </text>
+  <text x="397" y="192"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="12"
+        text-anchor="middle">
+    Client data and supporting documents captured
+  </text>
+
+  <!-- Validation -->
+  <rect x="197" y="250" width="400" height="70"
+        fill="#eef2ff" stroke="#1e3a8a" stroke-width="1.5"/>
+  <text x="397" y="280"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="14"
+        text-anchor="middle">
+    Validation and Controls
+  </text>
+  <text x="397" y="302"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="12"
+        text-anchor="middle">
+    Completeness and rule checks applied
+  </text>
+
+  <!-- Decision -->
+  <rect x="197" y="360" width="400" height="70"
+        fill="#f9fafb" stroke="#333333" stroke-width="1.3"/>
+  <text x="397" y="390"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="14"
+        text-anchor="middle">
+    Advice Processing
+  </text>
+  <text x="397" y="412"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="12"
+        text-anchor="middle">
+    Approved templates and rules used
+  </text>
+
+  <!-- Lineage -->
+  <rect x="197" y="470" width="400" height="70"
+        fill="#eef2ff" stroke="#1e3a8a" stroke-width="1.5"/>
+  <text x="397" y="500"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="14"
+        text-anchor="middle">
+    Audit Trail
+  </text>
+  <text x="397" y="522"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="12"
+        text-anchor="middle">
+    All key steps recorded and preserved
+  </text>
+
+  <!-- Bundle -->
+  <rect x="197" y="580" width="400" height="70"
+        fill="#f9fafb" stroke="#333333" stroke-width="1.3"/>
+  <text x="397" y="610"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="14"
+        text-anchor="middle">
+    Evidence Package
+  </text>
+  <text x="397" y="632"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="12"
+        text-anchor="middle">
+    Single portable record of the advice
+  </text>
+
+  <!-- Protection -->
+  <rect x="197" y="690" width="400" height="90"
+        fill="#eef2ff" stroke="#1e3a8a" stroke-width="1.5"/>
+  <text x="397" y="720"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="14"
+        text-anchor="middle">
+    Protection and Security
+  </text>
+  <text x="397" y="744"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="12"
+        text-anchor="middle">
+    Signed, timestamped and protected
+  </text>
+  <text x="397" y="764"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="12"
+        text-anchor="middle">
+    Optional encryption for secure sharing
+  </text>
+
+  <!-- Verification -->
+  <rect x="197" y="820" width="400" height="80"
+        fill="#f9fafb" stroke="#333333" stroke-width="1.3"/>
+  <text x="397" y="850"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="14"
+        text-anchor="middle">
+    Independent Verification
+  </text>
+  <text x="397" y="872"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="12"
+        text-anchor="middle">
+    Auditors and regulators can verify offline
+  </text>
+
+  <!-- Arrows -->
+  <line x1="397" y1="210" x2="397" y2="250"
+        stroke="#333333" stroke-width="1.6"
+        marker-end="url(#arrow)"/>
+
+  <line x1="397" y1="320" x2="397" y2="360"
+        stroke="#333333" stroke-width="1.6"
+        marker-end="url(#arrow)"/>
+
+  <line x1="397" y1="430" x2="397" y2="470"
+        stroke="#333333" stroke-width="1.6"
+        marker-end="url(#arrow)"/>
+
+  <line x1="397" y1="540" x2="397" y2="580"
+        stroke="#333333" stroke-width="1.6"
+        marker-end="url(#arrow)"/>
+
+  <line x1="397" y1="650" x2="397" y2="690"
+        stroke="#333333" stroke-width="1.6"
+        marker-end="url(#arrow)"/>
+
+  <line x1="397" y1="780" x2="397" y2="820"
+        stroke="#333333" stroke-width="1.6"
+        marker-end="url(#arrow)"/>
+
+</svg>

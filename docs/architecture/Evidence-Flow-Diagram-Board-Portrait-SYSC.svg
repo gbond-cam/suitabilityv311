@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="794"
+     height="1123"
+     viewBox="0 0 794 1123">
+
+  <defs>
+    <marker id="arrow"
+            markerWidth="10"
+            markerHeight="10"
+            refX="10"
+            refY="5"
+            orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#333333"/>
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="397" y="55"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="18"
+        font-weight="bold"
+        text-anchor="middle">
+    Evidence Controls – FCA / SYSC Mapping (Board View)
+  </text>
+
+  <!-- Intake -->
+  <rect x="197" y="120" width="400" height="85"
+        fill="#f9fafb" stroke="#333333" stroke-width="1.3"/>
+  <text x="397" y="145" font-size="14" text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif">
+    Evidence Intake
+  </text>
+  <text x="397" y="168" font-size="12" text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif">
+    FCA: SYSC 9.1 – Record keeping
+  </text>
+
+  <!-- Validation -->
+  <rect x="197" y="235" width="400" height="85"
+        fill="#eef2ff" stroke="#1e3a8a" stroke-width="1.5"/>
+  <text x="397" y="260" font-size="14" text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif">
+    Validation and Controls
+  </text>
+  <text x="397" y="283" font-size="12" text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif">
+    FCA: SYSC 6.1 – Adequate systems and controls
+  </text>
+
+  <!-- Processing -->
+  <rect x="197" y="350" width="400" height="85"
+        fill="#f9fafb" stroke="#333333" stroke-width="1.3"/>
+  <text x="397" y="375" font-size="14" text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif">
+    Advice Processing
+  </text>
+  <text x="397" y="398" font-size="12" text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif">
+    FCA: SYSC 3.2 – Operational controls
+  </text>
+
+  <!-- Lineage -->
+  <rect x="197" y="465" width="400" height="85"
+        fill="#eef2ff" stroke="#1e3a8a" stroke-width="1.5"/>
+  <text x="397" y="490" font-size="14" text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif">
+    Audit Trail
+  </text>
+  <text x="397" y="513" font-size="12" text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif">
+    FCA: SYSC 9.1 – Audit trail and reconstruction
+  </text>
+
+  <!-- Bundle -->
+  <rect x="197" y="580" width="400" height="85"
+        fill="#f9fafb" stroke="#333333" stroke-width="1.3"/>
+  <text x="397" y="605" font-size="14" text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif">
+    Evidence Package
+  </text>
+  <text x="397" y="628" font-size="12" text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif">
+    FCA: SYSC 9 – Retention of records
+  </text>
+
+  <!-- Protection -->
+  <rect x="197" y="695" width="400" height="100"
+        fill="#eef2ff" stroke="#1e3a8a" stroke-width="1.5"/>
+  <text x="397" y="720" font-size="14" text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif">
+    Protection and Security
+  </text>
+  <text x="397" y="744" font-size="12" text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif">
+    FCA: SYSC 3.2.19 – Resilience and integrity
+  </text>
+  <text x="397" y="764" font-size="12" text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif">
+    Signed, timestamped, optionally encrypted
+  </text>
+
+  <!-- Verification -->
+  <rect x="197" y="830" width="400" height="90"
+        fill="#f9fafb" stroke="#333333" stroke-width="1.3"/>
+  <text x="397" y="855" font-size="14" text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif">
+    Independent Verification
+  </text>
+  <text x="397" y="878" font-size="12" text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif">
+    FCA: Supervisory review and audit access
+  </text>
+
+  <!-- Arrows -->
+  <line x1="397" y1="205" x2="397" y2="235"
+        stroke="#333333" stroke-width="1.6"
+        marker-end="url(#arrow)"/>
+  <line x1="397" y1="320" x2="397" y2="350"
+        stroke="#333333" stroke-width="1.6"
+        marker-end="url(#arrow)"/>
+  <line x1="397" y1="435" x2="397" y2="465"
+        stroke="#333333" stroke-width="1.6"
+        marker-end="url(#arrow)"/>
+  <line x1="397" y1="550" x2="397" y2="580"
+        stroke="#333333" stroke-width="1.6"
+        marker-end="url(#arrow)"/>
+  <line x1="397" y1="665" x2="397" y2="695"
+        stroke="#333333" stroke-width="1.6"
+        marker-end="url(#arrow)"/>
+  <line x1="397" y1="795" x2="397" y2="830"
+        stroke="#333333" stroke-width="1.6"
+        marker-end="url(#arrow)"/>
+
+</svg>

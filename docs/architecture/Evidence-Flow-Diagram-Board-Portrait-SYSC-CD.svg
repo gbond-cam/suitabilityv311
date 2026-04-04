@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="794"
+     height="1123"
+     viewBox="0 0 794 1123">
+
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10"
+            refX="10" refY="5" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#333333"/>
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="397" y="50"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="18"
+        font-weight="bold"
+        text-anchor="middle">
+    Evidence Controls – FCA SYSC & Consumer Duty (Board View)
+  </text>
+
+  <!-- Evidence Intake -->
+  <rect x="197" y="120" width="400" height="95"
+        fill="#f9fafb" stroke="#333333" stroke-width="1.3"/>
+  <text x="397" y="145" font-size="14" text-anchor="middle">Evidence Intake</text>
+  <text x="397" y="168" font-size="12" text-anchor="middle">
+    SYSC 9.1 – Record keeping
+  </text>
+  <text x="397" y="188" font-size="12" text-anchor="middle">
+    Consumer Duty: Consumer Understanding
+  </text>
+
+  <!-- Validation -->
+  <rect x="197" y="240" width="400" height="95"
+        fill="#eef2ff" stroke="#1e3a8a" stroke-width="1.5"/>
+  <text x="397" y="265" font-size="14" text-anchor="middle">Validation and Controls</text>
+  <text x="397" y="288" font-size="12" text-anchor="middle">
+    SYSC 6.1 – Adequate systems and controls
+  </text>
+  <text x="397" y="308" font-size="12" text-anchor="middle">
+    Consumer Duty: Products and Services
+  </text>
+
+  <!-- Processing -->
+  <rect x="197" y="360" width="400" height="95"
+        fill="#f9fafb" stroke="#333333" stroke-width="1.3"/>
+  <text x="397" y="385" font-size="14" text-anchor="middle">Advice Processing</text>
+  <text x="397" y="408" font-size="12" text-anchor="middle">
+    SYSC 3.2 – Operational controls
+  </text>
+  <text x="397" y="428" font-size="12" text-anchor="middle">
+    Consumer Duty: Products and Services / Price and Value
+  </text>
+
+  <!-- Lineage -->
+  <rect x="197" y="480" width="400" height="95"
+        fill="#eef2ff" stroke="#1e3a8a" stroke-width="1.5"/>
+  <text x="397" y="505" font-size="14" text-anchor="middle">Audit Trail</text>
+  <text x="397" y="528" font-size="12" text-anchor="middle">
+    SYSC 9.1 – Audit trail and reconstruction
+  </text>
+  <text x="397" y="548" font-size="12" text-anchor="middle">
+    Consumer Duty: Consumer Support
+  </text>
+
+  <!-- Evidence Package -->
+  <rect x="197" y="600" width="400" height="95"
+        fill="#f9fafb" stroke="#333333" stroke-width="1.3"/>
+  <text x="397" y="625" font-size="14" text-anchor="middle">Evidence Package</text>
+  <text x="397" y="648" font-size="12" text-anchor="middle">
+    SYSC 9 – Retention of records
+  </text>
+  <text x="397" y="668" font-size="12" text-anchor="middle">
+    Consumer Duty: Consumer Support
+  </text>
+
+  <!-- Protection -->
+  <rect x="197" y="720" width="400" height="115"
+        fill="#eef2ff" stroke="#1e3a8a" stroke-width="1.5"/>
+  <text x="397" y="745" font-size="14" text-anchor="middle">Protection and Security</text>
+  <text x="397" y="768" font-size="12" text-anchor="middle">
+    SYSC 3.2.19 – Integrity and resilience
+  </text>
+  <text x="397" y="788" font-size="12" text-anchor="middle">
+    Signed, timestamped, optionally encrypted
+  </text>
+  <text x="397" y="808" font-size="12" text-anchor="middle">
+    Consumer Duty: Price and Value / Consumer Support
+  </text>
+
+  <!-- Verification -->
+  <rect x="197" y="860" width="400" height="95"
+        fill="#f9fafb" stroke="#333333" stroke-width="1.3"/>
+  <text x="397" y="885" font-size="14" text-anchor="middle">Independent Verification</text>
+  <text x="397" y="908" font-size="12" text-anchor="middle">
+    FCA supervisory and audit review
+  </text>
+  <text x="397" y="928" font-size="12" text-anchor="middle">
+    Consumer Duty: Consumer Support
+  </text>
+
+  <!-- Arrows -->
+  <line x1="397" y1="215" x2="397" y2="240" stroke="#333" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <line x1="397" y1="335" x2="397" y2="360" stroke="#333" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <line x1="397" y1="455" x2="397" y2="480" stroke="#333" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <line x1="397" y1="575" x2="397" y2="600" stroke="#333" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <line x1="397" y1="695" x2="397" y2="720" stroke="#333" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <line x1="397" y1="835" x2="397" y2="860" stroke="#333" stroke-width="1.6" marker-end="url(#arrow)"/>
+
+</svg>

@@ -11,7 +11,7 @@ jobs:
       canonical_changed: ${{ steps.detect.outputs.changed }}
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
 
     - name: Detect canonical template changes
       id: detect

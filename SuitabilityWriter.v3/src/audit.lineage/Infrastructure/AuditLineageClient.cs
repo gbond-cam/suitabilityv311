@@ -1,4 +1,4 @@
-using System.Net.Http.Json;
+using System.Text;
 using System.Text.Json;
 
 public sealed class AuditLineageClient
@@ -22,9 +22,11 @@ public sealed class AuditLineageClient
             record = record with { EventId = IdempotencyKey.From(record) };
         }
 
+        var json = JsonSerializer.Serialize(record, JsonOptions);
+
         using var request = new HttpRequestMessage(HttpMethod.Post, "api/RecordLineageEvent")
         {
-            Content = JsonContent.Create(record, options: JsonOptions)
+            Content = new StringContent(json, Encoding.UTF8, "application/json")
         };
 
         request.Headers.TryAddWithoutValidation("Idempotency-Key", record.EventId);

@@ -1,0 +1,18 @@
+﻿{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "EvidenceIntakeResponse",
+  "type": "object",
+  "required": ["caseId", "intakeStatus", "intakeId"],
+  "properties": {
+    "caseId": { "type": "string" },
+    "intakeId": { "type": "string" },
+    "intakeStatus": {
+      "type": "string",
+      "enum": ["accepted", "rejected"]
+    },
+    "errors": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

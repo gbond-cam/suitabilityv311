@@ -1,0 +1,10 @@
+﻿{
+  "eventType": "EVIDENCE_INTAKE",
+  "description": "Evidence accepted into system",
+  "requiredFields": [
+    "caseId",
+    "evidenceType",
+    "submittedAt",
+    "intakeId"
+  ]
+}

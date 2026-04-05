@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Enforce emergency incident closure SLA
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const SLA_DAYS = 7;

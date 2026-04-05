@@ -1,0 +1,25 @@
+﻿{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "EvidenceIntakeRequest",
+  "type": "object",
+  "required": ["caseId", "evidenceType", "payload", "submittedAt"],
+  "properties": {
+    "caseId": {
+      "type": "string",
+      "description": "Unique advice case identifier"
+    },
+    "evidenceType": {
+      "type": "string",
+      "enum": ["factfind", "risk-profile", "suitability-input", "supporting-document"]
+    },
+    "submittedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "payload": {
+      "type": "object",
+      "description": "Evidence-specific payload"
+    }
+  },
+  "additionalProperties": false
+}

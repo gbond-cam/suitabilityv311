@@ -1,0 +1,10 @@
+﻿{
+    "note":  "shared.kernel is a class library; no runtime environment settings.",
+    "requiredAppSettings":  [
+
+                            ],
+    "generatedAtUtc":  "2026-04-05T11:38:00.0232928Z",
+    "schema":  "com.consilium.env.contract",
+    "app":  "shared.kernel",
+    "schemaVersion":  "1.0.0"
+}

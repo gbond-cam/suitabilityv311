@@ -1,0 +1,13 @@
+﻿{
+  "requireDeliveryGate": true,
+  "requiredAppSettings": [
+    "FUNCTIONS_WORKER_RUNTIME",
+    "AzureWebJobsStorage",
+    "APP_VERSION"
+  ],
+  "requiredDirectories": [
+    "docs/governance",
+    "evidence/samples",
+    "mi/quarterly"
+  ]
+}

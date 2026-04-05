@@ -1,0 +1,45 @@
+{
+  "schema": "com.consilium.keyvault.mapping",
+  "schemaVersion": "1.0.0",
+  "description": "Mapping of application environment variables to Azure Key Vault secrets.",
+  "rules": [
+    {
+      "app": "suitability.engine",
+      "vault": "kv-suitability-prod",
+      "secrets": [
+        {
+          "envVar": "AUDIT_LINEAGE_FUNCTION_KEY",
+          "secretName": "audit-lineage-function-key",
+          "required": true
+        }
+      ]
+    },
+    {
+      "app": "evidence.intake",
+      "vault": "kv-suitability-prod",
+      "secrets": [
+        {
+          "envVar": "AUDIT_LINEAGE_FUNCTION_KEY",
+          "secretName": "audit-lineage-function-key",
+          "required": true
+        }
+      ]
+    },
+    {
+      "app": "startup.healthcheck",
+      "vault": "kv-suitability-prod",
+      "secrets": [
+        {
+          "envVar": "REQUIRE_DELIVERY_GATE",
+          "secretName": "require-delivery-gate",
+          "required": false
+        }
+      ]
+    }
+  ],
+  "principles": [
+    "Secrets are never committed to source control",
+    "Env vars are injected at runtime by Azure App Settings or Managed Identity",
+    "Key Vault is the system of record for secret values"
+  ]
+}

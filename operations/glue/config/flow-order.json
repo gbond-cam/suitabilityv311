@@ -1,0 +1,12 @@
+﻿{
+  "sequence": [
+    "startup.healthcheck",
+    "evidence.intake",
+    "template.routing",
+    "placeholder.validation",
+    "suitability.engine",
+    "report.generator",
+    "delivery.gate",
+    "audit.lineage"
+  ]
+}

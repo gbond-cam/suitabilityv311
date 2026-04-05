@@ -1,0 +1,23 @@
+﻿{
+    "secretSettings":  [
+
+                       ],
+    "requiredAppSettings":  [
+                                "FUNCTIONS_WORKER_RUNTIME",
+                                "AzureWebJobsStorage",
+                                "APP_VERSION",
+                                "APPROVED_TEMPLATES_ROOT_URL",
+                                "REPORT_OUTPUT_ROOT_URL"
+                            ],
+    "generatedAtUtc":  "2026-04-05T11:38:00.0103171Z",
+    "optionalAppSettings":  [
+                                "DEFAULT_REPORT_FORMAT"
+                            ],
+    "schema":  "com.consilium.env.contract",
+    "app":  "report.generator",
+    "guidance":  {
+                     "rule":  "If a required setting is missing, startup.healthcheck must fail closed.",
+                     "note":  "Secrets should be stored in Key Vault or function app configuration, not committed to source control."
+                 },
+    "schemaVersion":  "1.0.0"
+}

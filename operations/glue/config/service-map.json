@@ -1,0 +1,52 @@
+﻿{
+  "services": [
+    {
+      "name": "audit.lineage",
+      "baseUrl": "http://127.0.0.1:7071",
+      "healthPath": "/api/health",
+      "purpose": "Append-only audit lineage"
+    },
+    {
+      "name": "placeholder.validation",
+      "baseUrl": "http://127.0.0.1:7072",
+      "healthPath": "/api/placeholders/validate",
+      "purpose": "Placeholder policy enforcement"
+    },
+    {
+      "name": "delivery.gate",
+      "baseUrl": "http://127.0.0.1:7073",
+      "healthPath": "/api/delivery/gate",
+      "purpose": "Release and delivery controls"
+    },
+    {
+      "name": "evidence.intake",
+      "baseUrl": "http://127.0.0.1:7074",
+      "healthPath": "/api/evidence/intake",
+      "purpose": "Evidence intake and normalization"
+    },
+    {
+      "name": "report.generator",
+      "baseUrl": "http://127.0.0.1:7075",
+      "healthPath": "/api/reports/generate",
+      "purpose": "Report generation"
+    },
+    {
+      "name": "startup.healthcheck",
+      "baseUrl": "http://127.0.0.1:7076",
+      "healthPath": "/api/startup/healthcheck",
+      "purpose": "Startup invariant validation"
+    },
+    {
+      "name": "template.routing",
+      "baseUrl": "http://127.0.0.1:7077",
+      "healthPath": "/api/template/route",
+      "purpose": "Policy-driven template routing"
+    },
+    {
+      "name": "suitability.engine",
+      "baseUrl": "http://127.0.0.1:7078",
+      "healthPath": "/api/suitability/status",
+      "purpose": "End-to-end orchestration engine"
+    }
+  ]
+}

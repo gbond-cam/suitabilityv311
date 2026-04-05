@@ -4,7 +4,7 @@ param (
 
 Write-Host "Initializing delivery.gate structure in $RootPath" -ForegroundColor Cyan
 
-function Ensure-File {
+function New-FileIfMissing {
     param (
         [string]$Path,
         [string]$Content
@@ -111,7 +111,7 @@ $allFiles += $evidenceFiles
 $allFiles += $miFiles
 
 foreach ($file in $allFiles.GetEnumerator()) {
-    Ensure-File -Path $file.Key -Content $file.Value
+    New-FileIfMissing -Path $file.Key -Content $file.Value
 }
 
 Write-Host "`n[OK] delivery.gate structure initialized successfully." -ForegroundColor Cyan

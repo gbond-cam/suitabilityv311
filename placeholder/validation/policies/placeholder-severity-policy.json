@@ -1,0 +1,9 @@
+﻿{
+  "rules": [
+    { "pattern": "{{Client Name}}", "severity": "Block" },
+    { "pattern": "{{amount}}", "severity": "Block" },
+    { "pattern": "{{ATR}}", "severity": "Block" },
+    { "pattern": "{{risk}}", "severity": "High" },
+    { "pattern": "{{secondary}}", "severity": "Medium" }
+  ]
+}

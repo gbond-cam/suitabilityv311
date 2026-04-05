@@ -1,37 +1,59 @@
-name: Suitability Writer v3
+name: Delivery Gate
 
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
+  push:
+    branches:
+      - main
 
 jobs:
-  build:
+  delivery-gate:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v5
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: '8.0.x'
+      - name: Set up PowerShell
+        uses: PowerShell/PowerShell@v2
 
-    - name: Restore
-      run: dotnet restore SuitabilityWriter.v3.sln
+      - name: Run delivery gate
+        shell: pwsh
+        run: |
+          ./delivery.gate.check.ps1
 
-    - name: Build
-      run: dotnet build SuitabilityWriter.v3.sln --configuration Release --no-restore
+  governance-checks:
+    runs-on: ubuntu-latest
+    needs: delivery-gate
+    if: ${{ success() }}
 
-    - name: Test
-      run: dotnet test SuitabilityWriter.v3.sln --no-build
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Run golden path regression
-      run: dotnet test --filter GoldenPath
+      - name: Set up PowerShell
+        uses: PowerShell/PowerShell@v2
 
-    - name: Run GoldenPath invariant
-      run: dotnet test SuitabilityWriter.v3.sln --filter TestCategory=GoldenPath
+      - name: Check environment contracts
+        shell: pwsh
+        run: |
+          ./infra/env/check-env-contracts.ps1
 
-    - name: Policy Check (Fail Closed)
-      run: |
-        grep -R "FAIL_CLOSED" src || exit 1
+      - name: Check Key Vault mappings
+        shell: pwsh
+        run: |
+          ./infra/env/check-keyvault-mapping.ps1
+
+      - name: Pre-deploy re-check
+        shell: pwsh
+        run: |
+          ./deploy/pre-deploy-recheck.ps1 `
+            -Environment prod `
+            -SubscriptionId ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Export deployment evidence
+        shell: pwsh
+        run: |
+          ./deploy/export-deployment-evidence.ps1 `
+            -Environment prod `
+            -DeploymentId ${{ github.run_id }}

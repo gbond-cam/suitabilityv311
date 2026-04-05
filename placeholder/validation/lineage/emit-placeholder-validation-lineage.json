@@ -1,0 +1,9 @@
+﻿{
+  "eventType": "PLACEHOLDER_VALIDATION",
+  "description": "Template placeholder validation executed",
+  "requiredFields": [
+    "caseId",
+    "templateId",
+    "validationResult"
+  ]
+}

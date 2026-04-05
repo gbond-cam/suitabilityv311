@@ -1,0 +1,13 @@
+﻿{
+    "version":  "3.0",
+    "buildDateUtc":  "2026-04-05T11:37:59.9855167Z",
+    "provenance":  {
+                       "intent":  "Forensic identification of which build produced an artefact",
+                       "notes":  [
+                                     "Engine version aligns to the current suitability engine constant used in code."
+                                 ]
+                   },
+    "builtFrom":  "unknown",
+    "system":  "Suitability Writer",
+    "engine":  "SuitabilityEngine/3.0"
+}

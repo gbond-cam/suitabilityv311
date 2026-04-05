@@ -1,10 +1,10 @@
-param (
+﻿param (
     [string]$RootPath = (Get-Location).Path
 )
 
 Write-Host "Initializing evidence.intake structure in $RootPath" -ForegroundColor Cyan
 
-function Ensure-File {
+function New-FileIfMissing {
     param (
         [string]$Path,
         [string]$Content
@@ -25,6 +25,7 @@ function Ensure-File {
         Write-Host "Exists : $Path" -ForegroundColor Yellow
     }
 }
+
 
 # ------------------------------------------------------------------
 # EVIDENCE.INTAKE STRUCTURE
@@ -191,7 +192,8 @@ Responsible for controlled ingestion of evidence into the Evidence System.
 # ------------------------------------------------------------------
 
 foreach ($file in $intakeFiles.GetEnumerator()) {
-    Ensure-File -Path $file.Key -Content $file.Value
+    New-FileIfMissing -Path $file.Key -Content $file.Value
 }
 
 Write-Host "`n[OK] evidence.intake structure initialized successfully." -ForegroundColor Cyan
+

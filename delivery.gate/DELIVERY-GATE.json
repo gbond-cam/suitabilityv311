@@ -1,0 +1,27 @@
+﻿{
+    "systemVersion":  "3.0",
+    "notes":  [
+                  "This manifest is an auditable declaration that delivery.gate was satisfied at the time of release.",
+                  "Any change to schemas or approved artefacts requires a new system version."
+              ],
+    "asserts":  {
+                    "quarterlyMiPresent":  true,
+                    "governanceDocsPresent":  true,
+                    "architectureDocsPresent":  true,
+                    "operationalEvidencePresent":  true,
+                    "verificationDocsPresent":  true,
+                    "systemControlsIntegrated":  true
+                },
+    "generatedFrom":  {
+                          "machine":  "BOOK-M60V51RBMB",
+                          "gitSha":  "unknown"
+                      },
+    "system":  "Suitability Writer",
+    "schema":  "com.consilium.delivery.gate",
+    "validator":  {
+                      "expectedExitCode":  0,
+                      "script":  "delivery.gate.check.ps1"
+                  },
+    "schemaVersion":  "1.0.0",
+    "generatedAtUtc":  "2026-04-05T09:06:19.1199991Z"
+}

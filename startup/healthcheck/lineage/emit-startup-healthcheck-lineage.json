@@ -1,0 +1,9 @@
+﻿{
+  "eventType": "STARTUP_HEALTHCHECK",
+  "description": "Startup dependency and invariant validation executed",
+  "requiredFields": [
+    "serviceName",
+    "status",
+    "timestamp"
+  ]
+}

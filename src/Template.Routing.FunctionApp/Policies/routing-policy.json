@@ -1,0 +1,25 @@
+﻿{
+  "default": {
+    "templateFileName": "Consilium Suitability Report - ISA Template.docx",
+    "templateVersion": "v1",
+    "reason": "Default routing - no specific rule matched"
+  },
+  "rules": [
+    {
+      "match": { "reportType": "IsaNewBusiness" },
+      "route": { "templateFileName": "Isa_New_Business_V1.docx", "templateVersion": "v1", "reason": "Matched reportType IsaNewBusiness" }
+    },
+    {
+      "match": { "reportType": "IsaTransferCash" },
+      "route": { "templateFileName": "ISA_Transfer_(Cash)_V1.docx", "templateVersion": "v1", "reason": "Matched reportType IsaTransferCash" }
+    },
+    {
+      "match": { "reportType": "IsaTransferInSpecie" },
+      "route": { "templateFileName": "ISA_Transfer_(In-specie)_V1.docx", "templateVersion": "v1", "reason": "Matched reportType IsaTransferInSpecie" }
+    },
+    {
+      "match": { "reportType": "PensionSwitch" },
+      "route": { "templateFileName": "Investment Strategy Switch Fundment.docx", "templateVersion": "v1", "reason": "Matched reportType PensionSwitch" }
+    }
+  ]
+}

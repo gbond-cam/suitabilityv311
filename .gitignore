@@ -19,6 +19,12 @@ obj/
 # Azure Functions local settings (contains secrets)
 local.settings.json
 
+# Local Azurite data
+.azurite/
+
+# Generated deployment evidence bundles
+deploy/evidence/
+
 # Local test keys
 SuitabilityWriter.v3/src/audit.lineage/keys/test-auditor-private.pem
 SuitabilityWriter.v3/src/audit.lineage/keys/test-auditor-private.pem.pub

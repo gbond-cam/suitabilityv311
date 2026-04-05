@@ -3,13 +3,12 @@ param(
     [string]$CaseId = "GOLDEN-001"
 )
 
-$routeName = 'RecordLineage' + 'Event'
-$idPropertyName = 'Ev' + 'entId'
+$routeName = 'RecordLineageEvent'
 $uri = "$($BaseUrl.TrimEnd('/'))/api/$routeName"
 
 $seedRecords = @(
-    @{
-        MessageId = "seed-bootstrap-001"
+    [pscustomobject]@{
+        'EventId' = "seed-bootstrap-001"
         CaseId = $CaseId
         Stage = "Bootstrap"
         Action = "CaseOpened"
@@ -20,8 +19,8 @@ $seedRecords = @(
         TimestampUtc = "2026-04-03T10:00:00Z"
         Metadata = @{ channel = "local-test"; note = "seed data" }
     },
-    @{
-        MessageId = "seed-evidence-001"
+    [pscustomobject]@{
+        'EventId' = "seed-evidence-001"
         CaseId = $CaseId
         Stage = "EvidenceIntake"
         Action = "EvidenceReceived"
@@ -32,8 +31,8 @@ $seedRecords = @(
         TimestampUtc = "2026-04-03T10:05:00Z"
         Metadata = @{ channel = "local-test"; document = "fact-find" }
     },
-    @{
-        MessageId = "seed-approval-001"
+    [pscustomobject]@{
+        'EventId' = "seed-approval-001"
         CaseId = $CaseId
         Stage = "AdviceReview"
         Action = "AdviserApproved"
@@ -44,8 +43,8 @@ $seedRecords = @(
         TimestampUtc = "2026-04-03T10:15:00Z"
         Metadata = @{ decision = "approved" }
     },
-    @{
-        MessageId = "seed-delivery-001"
+    [pscustomobject]@{
+        'EventId' = "seed-delivery-001"
         CaseId = $CaseId
         Stage = "Delivery"
         Action = "Delivered"
@@ -58,11 +57,10 @@ $seedRecords = @(
     }
 )
 
-$seedRecords | ForEach-Object {
-    $json = $_ | ConvertTo-Json -Depth 6 -Compress
-    $json = $json.Replace('"MessageId"', ('"' + $idPropertyName + '"'))
+foreach ($lineageRecord in $seedRecords) {
+    $json = $lineageRecord | ConvertTo-Json -Depth 6 -Compress
     $response = Invoke-WebRequest -UseBasicParsing -Uri $uri -Method POST -ContentType "application/json" -Body $json
-    Write-Host "Seeded $($_.Action): HTTP $([int]$response.StatusCode)"
+    Write-Host "Seeded $($lineageRecord.Action): HTTP $([int]$response.StatusCode)"
 }
 
 Write-Host "Completed seeding lineage for case '$CaseId'."

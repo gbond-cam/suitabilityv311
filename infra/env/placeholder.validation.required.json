@@ -1,0 +1,22 @@
+﻿{
+    "secretSettings":  [
+
+                       ],
+    "requiredAppSettings":  [
+                                "FUNCTIONS_WORKER_RUNTIME",
+                                "AzureWebJobsStorage",
+                                "APP_VERSION",
+                                "PLACEHOLDER_SEVERITY_POLICY_PATH"
+                            ],
+    "generatedAtUtc":  "2026-04-05T11:38:00.0035836Z",
+    "optionalAppSettings":  [
+                                "PLACEHOLDER_MATRIX_SOURCE_URL"
+                            ],
+    "schema":  "com.consilium.env.contract",
+    "app":  "placeholder.validation",
+    "guidance":  {
+                     "rule":  "If a required setting is missing, startup.healthcheck must fail closed.",
+                     "note":  "Secrets should be stored in Key Vault or function app configuration, not committed to source control."
+                 },
+    "schemaVersion":  "1.0.0"
+}

@@ -1,0 +1,25 @@
+﻿{
+    "secretSettings":  [
+                           "AUDIT_LINEAGE_FUNCTION_KEY"
+                       ],
+    "requiredAppSettings":  [
+                                "FUNCTIONS_WORKER_RUNTIME",
+                                "AzureWebJobsStorage",
+                                "APP_VERSION",
+                                "AUDIT_LINEAGE_BASE_URL",
+                                "AUDIT_LINEAGE_FUNCTION_KEY"
+                            ],
+    "generatedAtUtc":  "2026-04-05T11:38:00.0103171Z",
+    "optionalAppSettings":  [
+                                "APPROVED_ARTEFACTS_SITE_ID",
+                                "APPROVED_ARTEFACTS_LIST_ID",
+                                "APPROVED_ARTEFACTS_DRIVE_ID"
+                            ],
+    "schema":  "com.consilium.env.contract",
+    "app":  "suitability.engine",
+    "guidance":  {
+                     "rule":  "If a required setting is missing, startup.healthcheck must fail closed.",
+                     "note":  "Secrets should be stored in Key Vault or function app configuration, not committed to source control."
+                 },
+    "schemaVersion":  "1.0.0"
+}

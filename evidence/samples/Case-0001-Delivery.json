@@ -1,0 +1,9 @@
+{
+  "caseId": "ISA-2026-01",
+  "reportType": "IsaTransferInSpecie",
+  "audience": "client",
+  "delivery": {
+    "channel": "sharepoint",
+    "return": "link"
+  }
+}

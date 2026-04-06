@@ -28,3 +28,4 @@ deploy/evidence/
 # Local test keys
 SuitabilityWriter.v3/src/audit.lineage/keys/test-auditor-private.pem
 SuitabilityWriter.v3/src/audit.lineage/keys/test-auditor-private.pem.pub
+.fake

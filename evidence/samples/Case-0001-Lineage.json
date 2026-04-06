@@ -1,0 +1,21 @@
+{
+  "caseId": "GOLDEN-CASE-A",
+  "note": "Client identity redacted",
+  "events": [
+    {
+      "stage": "intake",
+      "artefactType": "Fact Find",
+      "hash": "SHA256:…"
+    },
+    {
+      "stage": "routing",
+      "templateType": "ISA Transfer – In Specie",
+      "reason": "Rule-based routing"
+    },
+    {
+      "stage": "generation",
+      "outputType": "Suitability Report",
+      "hash": "SHA256:…"
+    }
+  ]
+}

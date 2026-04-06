@@ -1,0 +1,7 @@
+{
+  "status": "Success",
+  "caseId": "ISA-2026-01",
+  "report": { "format": "docx", "url": "https://..." },
+  "summaryForClient": "Plain-English 6–10 lines…",
+  "evidencePack": { "zipUrl": "https://..." }
+}

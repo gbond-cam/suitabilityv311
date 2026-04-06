@@ -1,1 +1,21 @@
-﻿{ }
+﻿{
+  "caseId": "GOLDEN-CASE-A",
+  "engineVersion": "SuitabilityEngine/3.0",
+  "templateUsed": {
+    "name": "Consilium Suitability Report - ISA Template.docx",
+    "version": "v1",
+    "hash": "SHA256:…"
+  },
+  "generatedAtUtc": "2026-03-12T14:22:09Z",
+  "validatedBy": [
+    "startup.healthcheck",
+    "placeholder.validation",
+    "delivery.gate"
+  ],
+  "outcome": "Generated",
+  "redaction": {
+    "performed": true,
+    "method": "copy + redact",
+    "personalDataRetained": false
+  }
+}

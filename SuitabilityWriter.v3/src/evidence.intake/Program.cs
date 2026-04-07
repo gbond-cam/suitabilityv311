@@ -23,6 +23,26 @@ var host = new HostBuilder()
 
         services.AddSingleton<ISystemClock, SystemClock>();
         services.AddSingleton<ICorrelationIdProvider, CorrelationIdProvider>();
+        services.AddHttpClient<SharedAuditLineageClient>(client =>
+        {
+            var baseUrl = Environment.GetEnvironmentVariable("AUDIT_LINEAGE_BASE_URL");
+            if (!string.IsNullOrWhiteSpace(baseUrl))
+            {
+                client.BaseAddress = new Uri(baseUrl.EndsWith('/') ? baseUrl : $"{baseUrl}/");
+            }
+
+            client.Timeout = TimeSpan.FromSeconds(5);
+
+            var functionKey = Environment.GetEnvironmentVariable("AUDIT_LINEAGE_FUNCTION_KEY");
+            if (!string.IsNullOrWhiteSpace(functionKey))
+            {
+                client.DefaultRequestHeaders.Add("x-functions-key", functionKey);
+            }
+        });
+        services.AddSingleton<ILineageRecorder>(sp =>
+            string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("AUDIT_LINEAGE_BASE_URL"))
+                ? new NoOpLineageRecorder()
+                : sp.GetRequiredService<SharedAuditLineageClient>());
         services.AddSingleton<IFailClosedPolicy, FailClosedPolicy>();
         services.AddSingleton<ISharePointEvidenceResolver, SharePointEvidenceResolver>();
     })

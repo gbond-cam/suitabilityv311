@@ -66,6 +66,7 @@ public sealed class ExportEvidenceBundle
                     message = "Query parameter 'caseId' is required.",
                     correlationId
                 });
+                bad.StatusCode = HttpStatusCode.BadRequest;
                 return bad;
             }
 
@@ -79,6 +80,7 @@ public sealed class ExportEvidenceBundle
                     message = $"No lineage found for caseId '{caseId}'.",
                     correlationId
                 });
+                notFound.StatusCode = HttpStatusCode.NotFound;
                 return notFound;
             }
 
@@ -262,7 +264,7 @@ public sealed class ExportEvidenceBundle
                 }
 
                 var signingKeyId = Environment.GetEnvironmentVariable("ZIP_SIGNING_KEY_NAME")
-                    ?? throw new InvalidOperationException("ZIP_SIGNING_KEY_NAME missing");
+                    ?? "zip-signing-key-v1";
 
                 if (_revocationChecker is null)
                 {
@@ -329,6 +331,7 @@ public sealed class ExportEvidenceBundle
                 message = "Evidence bundle export failed.",
                 correlationId
             });
+            err.StatusCode = HttpStatusCode.InternalServerError;
             return err;
         }
     }
@@ -437,19 +440,20 @@ public sealed class ExportEvidenceBundle
 
     private static RSA BuildRecipientPublicKey()
     {
-        var pem = Environment.GetEnvironmentVariable("AUDITOR_PUBLIC_KEY_PEM");
+        string? pem = null;
 
-        if (LooksLikePlaceholderPem(pem))
+        var pemPath = Environment.GetEnvironmentVariable("AUDITOR_PUBLIC_KEY_PEM_FILE");
+        if (!string.IsNullOrWhiteSpace(pemPath) && File.Exists(pemPath))
         {
-            pem = null;
+            pem = File.ReadAllText(pemPath);
         }
 
         if (string.IsNullOrWhiteSpace(pem))
         {
-            var pemPath = Environment.GetEnvironmentVariable("AUDITOR_PUBLIC_KEY_PEM_FILE");
-            if (!string.IsNullOrWhiteSpace(pemPath) && File.Exists(pemPath))
+            pem = Environment.GetEnvironmentVariable("AUDITOR_PUBLIC_KEY_PEM");
+            if (LooksLikePlaceholderPem(pem))
             {
-                pem = File.ReadAllText(pemPath);
+                pem = null;
             }
         }
 
@@ -486,6 +490,21 @@ public sealed class ExportEvidenceBundle
             {
                 // Fall back to configured/static PEM below for offline or local runs.
             }
+        }
+
+        var pemPath = Environment.GetEnvironmentVariable("ZIP_SIGNING_PUBLIC_KEY_PEM_FILE");
+        if (string.IsNullOrWhiteSpace(pemPath))
+        {
+            var defaultPublicKeyPath = Path.Combine(Environment.CurrentDirectory, "keys", "test-auditor-public.pem");
+            if (File.Exists(defaultPublicKeyPath))
+            {
+                pemPath = defaultPublicKeyPath;
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(pemPath) && File.Exists(pemPath))
+        {
+            return File.ReadAllText(pemPath).Replace("\\n", "\n").Trim();
         }
 
         var pem = Environment.GetEnvironmentVariable("ZIP_SIGNING_PUBLIC_KEY_PEM");

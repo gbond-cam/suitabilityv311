@@ -59,6 +59,11 @@ public static class EvidenceBundleClient
     {
         var privateKeyPem = Environment.GetEnvironmentVariable("AUDITOR_PRIVATE_KEY_PEM");
 
+        if (!string.IsNullOrWhiteSpace(privateKeyPem) && File.Exists(privateKeyPem))
+        {
+            privateKeyPem = File.ReadAllText(privateKeyPem);
+        }
+
         if (string.IsNullOrWhiteSpace(privateKeyPem))
         {
             var keyPath = Environment.GetEnvironmentVariable("AUDITOR_PRIVATE_KEY_PEM_FILE");

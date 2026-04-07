@@ -24,6 +24,7 @@
 
     <!-- HTTP + JSON for end-to-end calls -->
     <PackageReference Include="System.Net.Http.Json" Version="8.0.0" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.22.2" />
 
     <!-- Assertions -->
     <PackageReference Include="FluentAssertions" Version="6.12.0" />

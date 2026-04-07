@@ -25,7 +25,8 @@ local.settings.json
 # Generated deployment evidence bundles
 deploy/evidence/
 
-# Local test keys
+# Local test keys and runtime verification artefacts
 SuitabilityWriter.v3/src/audit.lineage/keys/test-auditor-private.pem
 SuitabilityWriter.v3/src/audit.lineage/keys/test-auditor-private.pem.pub
+SuitabilityWriter.v3/src/audit.lineage/keys/local-revocation-list.json
 .fake

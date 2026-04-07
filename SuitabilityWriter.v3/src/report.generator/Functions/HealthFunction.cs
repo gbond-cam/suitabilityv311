@@ -1,5 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
@@ -13,11 +15,13 @@ public class GenerateReportFunction
 {
     private readonly ILogger<GenerateReportFunction> _logger;
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ILineageRecorder _lineageRecorder;
 
-    public GenerateReportFunction(ILogger<GenerateReportFunction> logger, IHttpClientFactory httpClientFactory)
+    public GenerateReportFunction(ILogger<GenerateReportFunction> logger, IHttpClientFactory httpClientFactory, ILineageRecorder lineageRecorder)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
+        _lineageRecorder = lineageRecorder;
     }
 
     [Function("GenerateReport")]
@@ -42,9 +46,13 @@ public class GenerateReportFunction
             return badRequest;
         }
 
+        await RecordAuditAsync(payload, LineageActions.ReportGenerationRequested, "requested", "Report generation request received.", string.Empty, string.Empty);
+
         var (allowed, message, statusUrl) = await VerifyWorkflowPrerequisitesAsync(payload.CaseId, cancellationToken);
         if (!allowed)
         {
+            await RecordAuditAsync(payload, LineageActions.ReportGenerationBlocked, "blocked", message, statusUrl, string.Empty);
+
             var conflict = req.CreateResponse(HttpStatusCode.Conflict);
             await conflict.WriteStringAsync(message, cancellationToken);
             return conflict;
@@ -72,10 +80,37 @@ public class GenerateReportFunction
         };
         WorkflowUserExperienceHints.Apply(accepted);
 
+        await RecordAuditAsync(payload, LineageActions.ReportGenerated, responseStatus, responseMessage, statusUrl, downloadUrl);
+
         var response = req.CreateResponse(HttpStatusCode.Accepted);
         await response.WriteAsJsonAsync(accepted, cancellationToken);
         response.StatusCode = HttpStatusCode.Accepted;
         return response;
+    }
+
+    private Task RecordAuditAsync(ReportGenerationRequest payload, string action, string status, string message, string statusUrl, string downloadUrl)
+    {
+        var artefactHash = string.IsNullOrWhiteSpace(downloadUrl)
+            ? "N/A"
+            : Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(downloadUrl)));
+
+        return _lineageRecorder.RecordAsync(new LineageRecord(
+            EventId: string.Empty,
+            CaseId: payload.CaseId,
+            Stage: LineageStages.Generation,
+            Action: action,
+            ArtefactName: "SuitabilityReport",
+            ArtefactVersion: string.IsNullOrWhiteSpace(payload.TemplateId) ? "default-template" : payload.TemplateId,
+            ArtefactHash: artefactHash,
+            PerformedBy: string.IsNullOrWhiteSpace(payload.RequestedBy) ? "report.generator" : payload.RequestedBy,
+            TimestampUtc: DateTimeOffset.UtcNow,
+            Metadata: new
+            {
+                status,
+                message,
+                statusUrl,
+                downloadUrl
+            }));
     }
 
     private async Task<(bool Allowed, string Message, string StatusUrl)> VerifyWorkflowPrerequisitesAsync(string caseId, CancellationToken cancellationToken)

@@ -16,11 +16,13 @@ public class IntakeEvidenceFunction
 {
     private readonly ILogger<IntakeEvidenceFunction> _logger;
     private readonly ISharePointEvidenceResolver _sharePointEvidenceResolver;
+    private readonly ILineageRecorder _lineageRecorder;
 
-    public IntakeEvidenceFunction(ILogger<IntakeEvidenceFunction> logger, ISharePointEvidenceResolver sharePointEvidenceResolver)
+    public IntakeEvidenceFunction(ILogger<IntakeEvidenceFunction> logger, ISharePointEvidenceResolver sharePointEvidenceResolver, ILineageRecorder lineageRecorder)
     {
         _logger = logger;
         _sharePointEvidenceResolver = sharePointEvidenceResolver;
+        _lineageRecorder = lineageRecorder;
     }
 
     [Function("IntakeEvidence")]
@@ -86,10 +88,28 @@ public class IntakeEvidenceFunction
                     resolvedEvidence.RootWebUrl,
                     sharePoint!.IncludeChildren,
                     resolvedEvidence.FileCount);
+
+                await RecordAuditAsync(payload, LineageActions.EvidenceUploaded, new
+                {
+                    payload.EvidenceType,
+                    payload.Source,
+                    payload.SourceType,
+                    resolvedEvidence.RootWebUrl,
+                    resolvedEvidence.FileCount,
+                    sharePoint.IncludeChildren,
+                    status = "completed"
+                });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to resolve SharePoint evidence for case {CaseId}.", payload.CaseId);
+                await RecordAuditAsync(payload, LineageActions.EvidenceUploadFailed, new
+                {
+                    payload.EvidenceType,
+                    payload.Source,
+                    payload.SourceType,
+                    error = ex.Message
+                });
                 var sharePointError = req.CreateResponse(HttpStatusCode.BadGateway);
                 await sharePointError.WriteStringAsync("Unable to resolve SharePoint evidence for the supplied reference.");
                 return sharePointError;
@@ -102,6 +122,14 @@ public class IntakeEvidenceFunction
                 payload.CaseId,
                 payload.EvidenceType,
                 string.IsNullOrWhiteSpace(payload.Source) ? "unspecified" : payload.Source);
+
+            await RecordAuditAsync(payload, LineageActions.EvidenceUploaded, new
+            {
+                payload.EvidenceType,
+                payload.Source,
+                payload.SourceType,
+                status = "completed"
+            });
         }
 
         var accepted = new AcceptedResponse
@@ -121,5 +149,20 @@ public class IntakeEvidenceFunction
         await response.WriteAsJsonAsync(accepted);
         response.StatusCode = HttpStatusCode.Accepted;
         return response;
+    }
+
+    private Task RecordAuditAsync(EvidenceIntakeRequest payload, string action, object metadata)
+    {
+        return _lineageRecorder.RecordAsync(new LineageRecord(
+            EventId: string.Empty,
+            CaseId: payload.CaseId,
+            Stage: LineageStages.Validation,
+            Action: action,
+            ArtefactName: string.IsNullOrWhiteSpace(payload.EvidenceType) ? "ClientEvidence" : payload.EvidenceType,
+            ArtefactVersion: string.IsNullOrWhiteSpace(payload.SourceType) ? "v1" : payload.SourceType,
+            ArtefactHash: "N/A",
+            PerformedBy: "evidence.intake",
+            TimestampUtc: DateTimeOffset.UtcNow,
+            Metadata: metadata));
     }
 }

@@ -1,8 +1,24 @@
-﻿using Azure.Data.Tables;
+﻿using System.Security.Cryptography;
+using Azure.Data.Tables;
 using Azure.Storage.Blobs;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+
+static string? ResolveLocalSupportFile(string? configuredPath, string fileName)
+{
+    var candidates = new[]
+    {
+        configuredPath,
+        Path.Combine(Environment.CurrentDirectory, "keys", fileName),
+        Path.Combine(AppContext.BaseDirectory, "keys", fileName),
+        Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "..", "..", "..", "..", "keys", fileName)),
+        Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "keys", fileName))
+    };
+
+    return candidates.FirstOrDefault(path =>
+        !string.IsNullOrWhiteSpace(path) && File.Exists(path));
+}
 
 var host = new HostBuilder()
     .ConfigureFunctionsWorkerDefaults()
@@ -79,18 +95,50 @@ var host = new HostBuilder()
         });
 
         services.AddSingleton<BundleEncryptor>();
+        services.AddSingleton<ImmutableAuditArchive>();
 
         services.AddSingleton<ZipSigner>(_ =>
         {
             var vault = Environment.GetEnvironmentVariable("KEYVAULT_URL");
             var keyName = Environment.GetEnvironmentVariable("ZIP_SIGNING_KEY_NAME");
 
-            if (string.IsNullOrWhiteSpace(vault) || string.IsNullOrWhiteSpace(keyName))
+            if (!string.IsNullOrWhiteSpace(vault) && !string.IsNullOrWhiteSpace(keyName))
+            {
+                return new ZipSigner(KeyVaultRsaProvider.Load(vault, keyName));
+            }
+
+            var pem = Environment.GetEnvironmentVariable("ZIP_SIGNING_PRIVATE_KEY_PEM");
+            if (string.IsNullOrWhiteSpace(pem))
+            {
+                var pemPath = ResolveLocalSupportFile(
+                    Environment.GetEnvironmentVariable("ZIP_SIGNING_PRIVATE_KEY_PEM_FILE"),
+                    "test-auditor-private.pem");
+
+                if (!string.IsNullOrWhiteSpace(pemPath) && File.Exists(pemPath))
+                {
+                    pem = File.ReadAllText(pemPath);
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(pem))
             {
                 return null!;
             }
 
-            return new ZipSigner(KeyVaultRsaProvider.Load(vault, keyName));
+            var rsa = RSA.Create();
+            var normalizedPem = pem.Replace("\\n", "\n");
+            var passphrase = Environment.GetEnvironmentVariable("ZIP_SIGNING_PRIVATE_KEY_PASSPHRASE") ?? "LocalTestOnly123!";
+
+            try
+            {
+                rsa.ImportFromPem(normalizedPem);
+            }
+            catch (ArgumentException)
+            {
+                rsa.ImportFromEncryptedPem(normalizedPem, passphrase);
+            }
+
+            return new ZipSigner(rsa);
         });
 
         services.AddSingleton<Rfc3161TimestampClient>(sp =>

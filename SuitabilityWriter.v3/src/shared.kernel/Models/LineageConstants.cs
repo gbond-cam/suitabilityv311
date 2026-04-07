@@ -15,4 +15,13 @@ public static class LineageActions
     public const string IncidentCreated = "IncidentCreated";
     public const string IncidentClosed = "IncidentClosed";
     public const string SlaWarningIssued = "SlaWarningIssued";
+    public const string EvidenceUploaded = "EvidenceUploaded";
+    public const string EvidenceUploadFailed = "EvidenceUploadFailed";
+    public const string SuitabilityEvaluationRequested = "SuitabilityEvaluationRequested";
+    public const string SuitabilityEvaluationCompleted = "SuitabilityEvaluationCompleted";
+    public const string SuitabilityEvaluationFailed = "SuitabilityEvaluationFailed";
+    public const string ReportGenerationRequested = "ReportGenerationRequested";
+    public const string ReportGenerated = "ReportGenerated";
+    public const string ReportGenerationBlocked = "ReportGenerationBlocked";
+    public const string AuditReportGenerated = "AuditReportGenerated";
 }

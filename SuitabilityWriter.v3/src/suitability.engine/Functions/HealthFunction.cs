@@ -18,12 +18,14 @@ public class EvaluateSuitabilityFunction
     private readonly ILogger<EvaluateSuitabilityFunction> _logger;
     private readonly ISuitabilityWorkflowOrchestrator _workflowOrchestrator;
     private readonly IApiAuthorizationService _apiAuthorizationService;
+    private readonly ILineageRecorder _lineageRecorder;
 
-    public EvaluateSuitabilityFunction(ILogger<EvaluateSuitabilityFunction> logger, ISuitabilityWorkflowOrchestrator workflowOrchestrator, IApiAuthorizationService apiAuthorizationService)
+    public EvaluateSuitabilityFunction(ILogger<EvaluateSuitabilityFunction> logger, ISuitabilityWorkflowOrchestrator workflowOrchestrator, IApiAuthorizationService apiAuthorizationService, ILineageRecorder lineageRecorder)
     {
         _logger = logger;
         _workflowOrchestrator = workflowOrchestrator;
         _apiAuthorizationService = apiAuthorizationService;
+        _lineageRecorder = lineageRecorder;
     }
 
     [Function("EvaluateSuitability")]
@@ -92,9 +94,43 @@ public class EvaluateSuitabilityFunction
             return badRequest;
         }
 
+        await RecordAuditAsync(payload, LineageActions.SuitabilityEvaluationRequested, new
+        {
+            payload.AdviceScope,
+            payload.RiskProfile,
+            payload.AutoStartEvaluation,
+            payload.AutoGenerateReport,
+            payload.WaitForCompletion
+        });
+
         _logger.LogInformation("Starting suitability workflow for case {CaseId}. AutoGenerateReport={AutoGenerateReport}", payload.CaseId, payload.AutoGenerateReport);
 
-        var workflowState = await _workflowOrchestrator.RunAsync(payload, cancellationToken);
+        CaseWorkflowStateResponse workflowState;
+        try
+        {
+            workflowState = await _workflowOrchestrator.RunAsync(payload, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            await RecordAuditAsync(payload, LineageActions.SuitabilityEvaluationFailed, new
+            {
+                payload.AdviceScope,
+                payload.RiskProfile,
+                payload.AutoGenerateReport,
+                error = ex.Message
+            });
+            throw;
+        }
+
+        await RecordAuditAsync(payload, LineageActions.SuitabilityEvaluationCompleted, new
+        {
+            workflowStatus = workflowState.Status,
+            workflowState.CurrentStage,
+            workflowState.ProgressPercentage,
+            workflowState.DownloadUrl,
+            workflowState.SecureDownloadUrl
+        });
+
         var evaluationStep = workflowState.Steps.FirstOrDefault(step => string.Equals(step.Step, WorkflowStepNames.EvaluateSuitability, StringComparison.OrdinalIgnoreCase));
         var statusUrl = $"{req.Url.GetLeftPart(UriPartial.Authority)}/api/suitability/cases/{Uri.EscapeDataString(payload.CaseId)}/status";
 
@@ -118,5 +154,23 @@ public class EvaluateSuitabilityFunction
         await response.WriteAsJsonAsync(accepted, cancellationToken);
         response.StatusCode = HttpStatusCode.Accepted;
         return response;
+    }
+
+    private Task RecordAuditAsync(SuitabilityEvaluationRequest payload, object metadata)
+        => RecordAuditAsync(payload, LineageActions.SuitabilityEvaluationRequested, metadata);
+
+    private Task RecordAuditAsync(SuitabilityEvaluationRequest payload, string action, object metadata)
+    {
+        return _lineageRecorder.RecordAsync(new LineageRecord(
+            EventId: string.Empty,
+            CaseId: payload.CaseId,
+            Stage: LineageStages.Generation,
+            Action: action,
+            ArtefactName: "SuitabilityWorkflow",
+            ArtefactVersion: string.IsNullOrWhiteSpace(payload.AdviceScope) ? "v1" : payload.AdviceScope,
+            ArtefactHash: "N/A",
+            PerformedBy: "suitability.engine",
+            TimestampUtc: DateTimeOffset.UtcNow,
+            Metadata: metadata));
     }
 }

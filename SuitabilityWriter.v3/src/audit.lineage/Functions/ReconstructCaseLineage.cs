@@ -51,6 +51,7 @@ public sealed class ReconstructCaseLineage
                     message = "Query parameter 'caseId' is required.",
                     correlationId
                 });
+                bad.StatusCode = HttpStatusCode.BadRequest;
                 return bad;
             }
 
@@ -65,6 +66,7 @@ public sealed class ReconstructCaseLineage
                     message = $"No lineage found for caseId '{caseId}'.",
                     correlationId
                 });
+                notFound.StatusCode = HttpStatusCode.NotFound;
                 return notFound;
             }
 
@@ -157,6 +159,7 @@ public sealed class ReconstructCaseLineage
                 message = "Reconstruction failed.",
                 correlationId
             });
+            err.StatusCode = HttpStatusCode.InternalServerError;
             return err;
         }
     }

@@ -8,13 +8,16 @@ using System.Text.Json;
 public sealed class RecordLineageEvent
 {
     private readonly ILineageWriter _writer;
+    private readonly ImmutableAuditArchive _immutableAuditArchive;
     private readonly ILogger<RecordLineageEvent> _logger;
 
     public RecordLineageEvent(
         ILineageWriter writer,
+        ImmutableAuditArchive immutableAuditArchive,
         ILogger<RecordLineageEvent> logger)
     {
         _writer = writer;
+        _immutableAuditArchive = immutableAuditArchive;
         _logger = logger;
     }
 
@@ -66,6 +69,9 @@ public sealed class RecordLineageEvent
         }
 
         await _writer.AppendAsync(record);
+        await _immutableAuditArchive.StoreLineageRecordAsync(record, CancellationToken.None);
+
+        _logger.LogInformation("Recorded immutable audit event for case {CaseId}. Action={Action}, Stage={Stage}.", record.CaseId, record.Action, record.Stage);
 
         var ok = req.CreateResponse(HttpStatusCode.Accepted);
         return ok;

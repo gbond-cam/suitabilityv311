@@ -47,7 +47,7 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
 }
 
 // Log Analytics Workspace
-resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2021-12-01' = {
+resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
   name: '${environmentName}-loganalytics'
   location: location
   sku: {
@@ -61,7 +61,7 @@ resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2021-12-01' = {
 
 // Key Vault
 resource keyVault 'Microsoft.KeyVault/vaults@2023-02-01' = {
-  name: '${environmentName}-kv'
+  name: '${environmentName}-kv-${uniqueString(resourceGroup().id, environmentName, 'kv')}'
   location: location
   properties: {
     tenantId: subscription().tenantId
@@ -88,9 +88,9 @@ module auditLineage 'function-app.bicep' = {
     location: location
     userAssignedIdentityResourceId: identity.id
     userAssignedIdentityPrincipalId: identity.properties.principalId
-    storageAccountResourceId: storage.id
+
     storageAccountName: storage.name
-    appInsightsResourceId: appInsights.id
+    appInsightsInstrumentationKey: appInsights.properties.InstrumentationKey
     logAnalyticsWorkspaceResourceId: logAnalytics.id
   }
 }

@@ -14,9 +14,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up PowerShell
-        uses: PowerShell/PowerShell@v2
-
       - name: Run delivery gate
         shell: pwsh
         run: |
@@ -30,9 +27,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Set up PowerShell
-        uses: PowerShell/PowerShell@v2
 
       - name: Check environment contracts
         shell: pwsh

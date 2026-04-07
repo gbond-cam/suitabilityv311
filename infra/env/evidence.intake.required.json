@@ -12,7 +12,10 @@
     "generatedAtUtc":  "2026-04-05T11:37:59.9957769Z",
     "optionalAppSettings":  [
                                 "EVIDENCE_CONTAINER_NAME",
-                                "MAX_UPLOAD_BYTES"
+                                "MAX_UPLOAD_BYTES",
+                                "SHAREPOINT_TENANT_ID",
+                                "SHAREPOINT_ALLOWED_HOSTS",
+                                "SHAREPOINT_CLIENT_CASE_DRIVE_ID"
                             ],
     "schema":  "com.consilium.env.contract",
     "app":  "evidence.intake",

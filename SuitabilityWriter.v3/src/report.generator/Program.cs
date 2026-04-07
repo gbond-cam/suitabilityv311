@@ -13,6 +13,7 @@ var host = new HostBuilder()
             logging.SetMinimumLevel(LogLevel.Information);
         });
 
+        services.AddHttpClient();
         services.AddSingleton<ISystemClock, SystemClock>();
         services.AddSingleton<ICorrelationIdProvider, CorrelationIdProvider>();
         services.AddSingleton<IFailClosedPolicy, FailClosedPolicy>();

@@ -1,6 +1,7 @@
 ﻿{
     "secretSettings":  [
-                           "AUDIT_LINEAGE_FUNCTION_KEY"
+                           "AUDIT_LINEAGE_FUNCTION_KEY",
+                           "DATAVERSE_CLIENT_SECRET"
                        ],
     "requiredAppSettings":  [
                                 "FUNCTIONS_WORKER_RUNTIME",
@@ -13,7 +14,32 @@
     "optionalAppSettings":  [
                                 "APPROVED_ARTEFACTS_SITE_ID",
                                 "APPROVED_ARTEFACTS_LIST_ID",
-                                "APPROVED_ARTEFACTS_DRIVE_ID"
+                                "APPROVED_ARTEFACTS_DRIVE_ID",
+                                "EVIDENCE_INTAKE_BASE_URL",
+                                "EVIDENCE_INTAKE_FUNCTION_KEY",
+                                "REPORT_GENERATOR_BASE_URL",
+                                "REPORT_GENERATOR_FUNCTION_KEY",
+                                "REQUIRE_AAD_AUTH",
+                                "API_ALLOWED_ROLES",
+                                "SUITABILITY_EVALUATE_ALLOWED_ROLES",
+                                "SUITABILITY_STATUS_ALLOWED_ROLES",
+                                "CLIENT_DATA_STORAGE_PROVIDER",
+                                "CLIENT_DATA_STORAGE_CONNECTION",
+                                "CLIENT_DATA_BLOB_CONTAINER",
+                                "CLIENT_DATA_STORAGE_FILE_PATH",
+                                "DATAVERSE_URL",
+                                "DATAVERSE_ENTITY_SET_NAME",
+                                "DATAVERSE_CASE_ID_FIELD",
+                                "DATAVERSE_JSON_FIELD",
+                                "DATAVERSE_NAME_FIELD",
+                                "DATAVERSE_TENANT_ID",
+                                "DATAVERSE_CLIENT_ID",
+                                "DATAVERSE_CLIENT_SECRET",
+                                "DATAVERSE_MANAGED_IDENTITY_CLIENT_ID",
+                                "WORKFLOW_STATE_STORAGE_MODE",
+                                "WORKFLOW_STATE_TABLE_NAME",
+                                "WORKFLOW_STATE_TABLES_CONNECTION",
+                                "WORKFLOW_STATE_FILE_PATH"
                             ],
     "schema":  "com.consilium.env.contract",
     "app":  "suitability.engine",

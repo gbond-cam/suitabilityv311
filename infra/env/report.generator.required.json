@@ -11,7 +11,9 @@
                             ],
     "generatedAtUtc":  "2026-04-05T11:38:00.0103171Z",
     "optionalAppSettings":  [
-                                "DEFAULT_REPORT_FORMAT"
+                                "DEFAULT_REPORT_FORMAT",
+                                "SUITABILITY_ENGINE_BASE_URL",
+                                "SUITABILITY_ENGINE_FUNCTION_KEY"
                             ],
     "schema":  "com.consilium.env.contract",
     "app":  "report.generator",

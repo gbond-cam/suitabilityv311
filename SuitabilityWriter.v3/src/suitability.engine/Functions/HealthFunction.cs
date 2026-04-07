@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Text.Json;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
@@ -7,43 +8,115 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Shared.Kernel.Models.Requests;
 using Shared.Kernel.Models.Responses;
+using Shared.Kernel.Validation;
+using Suitability.Engine.Services;
 
 namespace Suitability.Engine.Functions;
 
 public class EvaluateSuitabilityFunction
 {
     private readonly ILogger<EvaluateSuitabilityFunction> _logger;
+    private readonly ISuitabilityWorkflowOrchestrator _workflowOrchestrator;
+    private readonly IApiAuthorizationService _apiAuthorizationService;
 
-    public EvaluateSuitabilityFunction(ILogger<EvaluateSuitabilityFunction> logger)
+    public EvaluateSuitabilityFunction(ILogger<EvaluateSuitabilityFunction> logger, ISuitabilityWorkflowOrchestrator workflowOrchestrator, IApiAuthorizationService apiAuthorizationService)
     {
         _logger = logger;
+        _workflowOrchestrator = workflowOrchestrator;
+        _apiAuthorizationService = apiAuthorizationService;
     }
 
     [Function("EvaluateSuitability")]
-    [OpenApiOperation(operationId: "EvaluateSuitability", tags: new[] { "Suitability" }, Summary = "Evaluate suitability", Description = "Submits a suitability case for generation and returns a correlation identifier.", Visibility = OpenApiVisibilityType.Important)]
-    [OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "code", In = OpenApiSecurityLocationType.Query)]
-    [OpenApiSecurity("function_key_header", SecuritySchemeType.ApiKey, Name = "x-functions-key", In = OpenApiSecurityLocationType.Header)]
-    [OpenApiRequestBody(contentType: "application/json", bodyType: typeof(SuitabilityEvaluationRequest), Required = true, Description = "The suitability evaluation request payload.")]
-    [OpenApiResponseWithBody(statusCode: HttpStatusCode.Accepted, contentType: "application/json", bodyType: typeof(AcceptedResponse), Summary = "Accepted", Description = "The suitability evaluation was accepted for processing.")]
-    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.BadRequest, Summary = "Bad request", Description = "A valid suitability evaluation payload is required.")]
-    public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = "suitability/evaluate")] HttpRequestData req)
+    [OpenApiOperation(operationId: "EvaluateSuitability", tags: new[] { "Suitability" }, Summary = "Evaluate suitability workflow", Description = "Runs the end-to-end case workflow: validates evidence, evaluates suitability, waits for completion, and can trigger report generation while maintaining per-case state.", Visibility = OpenApiVisibilityType.Important)]
+    [OpenApiSecurity("bearer_auth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT", Name = "Authorization", In = OpenApiSecurityLocationType.Header, Description = "Azure AD OAuth bearer token.")]
+    [OpenApiRequestBody(contentType: "application/json", bodyType: typeof(SuitabilityEvaluationRequest), Required = true, Description = "The suitability workflow request payload.")]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.Accepted, contentType: "application/json", bodyType: typeof(AcceptedResponse), Summary = "Accepted", Description = "The end-to-end suitability workflow was accepted and case state tracking has started.")]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.BadRequest, contentType: "application/json", bodyType: typeof(ValidationProblemResponse), Summary = "Bad request", Description = "A valid suitability evaluation payload, including structured client data intake, is required.")]
+    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Unauthorized, Summary = "Unauthorized", Description = "An Azure AD bearer token is required.")]
+    [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Forbidden, Summary = "Forbidden", Description = "The authenticated caller does not have a required role.")]
+    public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "suitability/evaluate")] HttpRequestData req, CancellationToken cancellationToken)
     {
-        var payload = await req.ReadFromJsonAsync<SuitabilityEvaluationRequest>();
+        var authorizationFailure = await _apiAuthorizationService.AuthorizeAsync(req, cancellationToken, "SUITABILITY_EVALUATE_ALLOWED_ROLES");
+        if (authorizationFailure is not null)
+        {
+            return authorizationFailure;
+        }
+
+        SuitabilityEvaluationRequest? payload;
+        try
+        {
+            payload = await req.ReadFromJsonAsync<SuitabilityEvaluationRequest>();
+        }
+        catch (Exception ex) when (ex is JsonException || ex is AggregateException { InnerException: JsonException })
+        {
+            var badJson = req.CreateResponse(HttpStatusCode.BadRequest);
+            await badJson.WriteAsJsonAsync(new ValidationProblemResponse
+            {
+                Message = "A valid JSON suitability evaluation payload is required.",
+                Prompt = "Please check the request details and try again.",
+                SuggestedAction = "fix-request-payload",
+                Errors = ["The request body could not be parsed as JSON."]
+            }, cancellationToken);
+            badJson.StatusCode = HttpStatusCode.BadRequest;
+            return badJson;
+        }
+
         if (payload is null || string.IsNullOrWhiteSpace(payload.CaseId))
         {
             var badRequest = req.CreateResponse(HttpStatusCode.BadRequest);
-            await badRequest.WriteStringAsync("A valid suitability evaluation payload is required.");
+            await badRequest.WriteAsJsonAsync(new ValidationProblemResponse
+            {
+                Message = "A valid suitability evaluation payload is required.",
+                Prompt = "Please provide a case ID and client details to continue.",
+                SuggestedAction = "complete-request",
+                Errors = ["CaseId is required."]
+            }, cancellationToken);
+            badRequest.StatusCode = HttpStatusCode.BadRequest;
             return badRequest;
         }
 
-        _logger.LogInformation("Evaluating suitability for case {CaseId}.", payload.CaseId);
+        var validationErrors = SuitabilityEvaluationRequestValidator.Validate(payload);
+        if (validationErrors.Count > 0)
+        {
+            var clientDataMissing = payload.ClientData is null;
+            var problem = new ValidationProblemResponse
+            {
+                Message = "Structured client data intake is incomplete. Please complete the fact-find before starting evaluation.",
+                Errors = validationErrors.ToList()
+            };
+            WorkflowUserExperienceHints.Apply(problem, clientDataMissing);
 
-        var response = req.CreateResponse(HttpStatusCode.Accepted);
-        await response.WriteAsJsonAsync(new AcceptedResponse
+            var badRequest = req.CreateResponse(HttpStatusCode.BadRequest);
+            await badRequest.WriteAsJsonAsync(problem, cancellationToken);
+            badRequest.StatusCode = HttpStatusCode.BadRequest;
+            return badRequest;
+        }
+
+        _logger.LogInformation("Starting suitability workflow for case {CaseId}. AutoGenerateReport={AutoGenerateReport}", payload.CaseId, payload.AutoGenerateReport);
+
+        var workflowState = await _workflowOrchestrator.RunAsync(payload, cancellationToken);
+        var evaluationStep = workflowState.Steps.FirstOrDefault(step => string.Equals(step.Step, WorkflowStepNames.EvaluateSuitability, StringComparison.OrdinalIgnoreCase));
+        var statusUrl = $"{req.Url.GetLeftPart(UriPartial.Authority)}/api/suitability/cases/{Uri.EscapeDataString(payload.CaseId)}/status";
+
+        var accepted = new AcceptedResponse
         {
             Operation = "suitability.evaluate",
-            CorrelationId = Guid.NewGuid().ToString("N")
-        });
+            Status = workflowState.Status,
+            CorrelationId = evaluationStep?.CorrelationId ?? Guid.NewGuid().ToString("N"),
+            CaseId = payload.CaseId,
+            Message = workflowState.Message,
+            CurrentStage = workflowState.CurrentStage,
+            ProgressPercentage = workflowState.ProgressPercentage,
+            NextPrompt = workflowState.NextPrompt,
+            StatusUrl = statusUrl,
+            DownloadUrl = workflowState.DownloadUrl,
+            SecureDownloadUrl = workflowState.SecureDownloadUrl
+        };
+        WorkflowUserExperienceHints.Apply(accepted);
+
+        var response = req.CreateResponse(HttpStatusCode.Accepted);
+        await response.WriteAsJsonAsync(accepted, cancellationToken);
+        response.StatusCode = HttpStatusCode.Accepted;
         return response;
     }
 }
